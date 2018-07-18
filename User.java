@@ -1,52 +1,57 @@
+import java.io.IOException;
+import java.util.*;
+
 public class User implements GroupInterface, FollowerInterface
 {
     private String ID;
-    private Set<User> followings
-    private Set<User> followers
-    private List<Twitt> newsFeeds
+    private Set<User> followings;
+    private Set<User> followers;
+    private List<Twitt> newsFeeds;
     private String groupID;
     private final int MAX_LENGTH=200;
 
     public User(String in)
     {
         followers=new HashSet<User>();
-        followings=new HAshSet<User>();
+        followings=new HashSet<User>();
         newsFeeds=new ArrayList<Twitt>();
-        //check ID duplicate
-        //upload to server
+        ID=in;
     }
 
     public void setID(String in)
     {
-        //check ID duplicate
-        //upload to server
+        ID=in;
     }
     
-    @override
+    @Override
     public String getID()
     {
         return ID;
     }
 
-    @override
+    @Override
     public int hashCode()
     {
         return ID.hashCode();
     }
-
-    @override
+    
     public boolean equals(GroupInterface otherUser)
     {
         return ID.equals(otherUser.getID());
     }
 
-    @override
+    @Override
     public void setGroup(String in)
     {
         groupID=in;
     }
 
-    @override
+    @Override
+    public String getGroupID()
+    {
+        return groupID;
+    }
+    @Override
     public void removeGroup()
     {
         groupID=null;
@@ -62,13 +67,13 @@ public class User implements GroupInterface, FollowerInterface
         followers.remove(unfollower);
     }
 
-    public void follow(User following)
+    public void follow(User following)throws IOException
     {
         if(!followings.contains(following))
         {
             followings.add(following);
             following.attach(this);
-        }
+        }else throw new IOException();
     }
 
 
@@ -81,14 +86,14 @@ public class User implements GroupInterface, FollowerInterface
         }
     }
 
-    @override
+    @Override
     public void update(Twitt newTwitt)
     {
         //update newsfeed
-        newsFeeds.add(newTwitt)
+        newsFeeds.add(newTwitt);
     }
 
-    public void twitt(String content)
+    public void twitt(String content) throws IOException
     {
         //check content length
         if(content.length()<=MAX_LENGTH)
@@ -97,17 +102,30 @@ public class User implements GroupInterface, FollowerInterface
             newTwitt.setContent(content);
             newsFeeds.add(newTwitt);
             //update followers
-            Iterator<FollowerInterface> iterator=followers.iterator();
-            while(iterator.hasNest())
+            Iterator<User> iterator=followers.iterator();
+            while(iterator.hasNext())
             {
-                FollowerInterface follower=iterator.next();
-                follower.update(newTwitt)
+                User follower=iterator.next();
+                follower.update(newTwitt);
             }
             AdminServer admin=AdminServer.getInstance();
             admin.accTwittNum();
             //positive twitt
+            int f=0;
+            for(int i=0;i<content.length();i++)
+            {
+                if(content.charAt(i)==' ')
+                {
+                    String sub=content.substring(f,i);
+                    if(sub.equalsIgnoreCase("good")||sub.equalsIgnoreCase("nice")||sub.equalsIgnoreCase("cool"));
+                    {
+                        admin.accPositive();
+                    }
+                    f=i+1;
+                }
+            }
         }
-        else //SizeLimitExceededException
+        else throw new IOException();//SizeLimitExceededException
         
     }
 
@@ -118,22 +136,49 @@ public class User implements GroupInterface, FollowerInterface
         //update server
     }
 
-    public void notify()
-    {
-        //iterate followers and call update()
-    }
 
-    public List<Twitt> getFeedList()
+    public Twitt[] getFeedList()
     {
-        List<Twitt> result=newsFeeds.clone();
+        if(newsFeeds.isEmpty())
+        {
+            return null;
+        }    
+        Twitt[] result=new Twitt[newsFeeds.size()];
+        newsFeeds.toArray(result);
         return result;
     }
-    public Iterator getFollowerIterator()
+    public String[] getFollowerArray()
     {
-        return followers.iterator();
+        if(followers.isEmpty())
+        {
+            String[] result={"Empty"};
+            return result;
+        }
+        String[] result=new String[followers.size()];
+        Iterator<User> i=followers.iterator();
+        int j=0;
+        while(i.hasNext())
+            {
+                result[j]=i.next().getID();
+                j++;
+            }
+        return result;
     }
-    public Iterator getFollowingIterator()
+    public String[] getFollowingArray()
     {
-        return followings.iterator();
+        if(followings.isEmpty())
+        {
+            String[] result={"Empty"};
+            return result;
+        }
+        String[] result=new String[followings.size()];
+        Iterator<User> i=followings.iterator();
+        int j=0;
+        while(i.hasNext())
+            {
+                result[j]=i.next().getID();
+                j++;
+            }
+        return result;
     }
 }

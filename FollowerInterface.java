@@ -1,4 +1,4 @@
 public interface FollowerInterface
 {
-    public void update(String);
+    public void update(Twitt in);
 }

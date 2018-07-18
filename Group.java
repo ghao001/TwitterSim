@@ -1,3 +1,4 @@
+import java.util.*;
 public class Group implements GroupInterface
 {
     private String ID;
@@ -19,31 +20,36 @@ public class Group implements GroupInterface
         }
     }
 
-    @override
+    @Override
     public void setGroup(String newGroup)
     {
         groupID=newGroup;
     }
 
-    @override
+    @Override
     public void removeGroup()
     {
         groupID=null;
     }
 
-    @override
+    @Override
     public String getID()
     {
         return ID;
     }
 
-    @override
+    @Override
     public int hashCode()
     {
         return ID.hashCode();
     }
+    
+    @Override
+    public String getGroupID()
+    {
+        return groupID;
+    }
 
-    @override
     public boolean equals(GroupInterface otherUser)
     {
         return ID.equals(otherUser.getID());
