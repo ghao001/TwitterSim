@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.*;
 
+
 public class User implements GroupInterface, FollowerInterface
 {
     private String ID;
@@ -111,6 +112,7 @@ public class User implements GroupInterface, FollowerInterface
             AdminServer admin=AdminServer.getInstance();
             admin.accTwittNum();
             //positive twitt
+            content+=" ";
             int f=0;
             for(int i=0;i<content.length();i++)
             {
@@ -126,7 +128,6 @@ public class User implements GroupInterface, FollowerInterface
             }
         }
         else throw new IOException();//SizeLimitExceededException
-        
     }
 
     public void deleteTwitt(int index)

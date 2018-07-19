@@ -18,10 +18,10 @@ public class UserViewFrame extends javax.swing.JFrame {
     private final AdminServer admin=AdminServer.getInstance();
 
     public UserViewFrame(User selectedUser) {
-        initComponents();
         setVisible(true);
         user=selectedUser;
         setTitle(user.getID());
+        initComponents();
     }
 
     /**
@@ -45,8 +45,6 @@ public class UserViewFrame extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jLabel1.setText(user.getID());
 
         jTextField1.setText("User ID");
@@ -60,7 +58,7 @@ public class UserViewFrame extends javax.swing.JFrame {
                 {
                     User newFollowing=admin.getUser(jTextField1.getText());
                     user.follow(newFollowing);
-                    jList1.updateUI();
+                    jList1.setModel(newListModel());
                 }
                 catch(IOException ex)
                 {
@@ -72,10 +70,10 @@ public class UserViewFrame extends javax.swing.JFrame {
         jTextArea2.setEditable(false);
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
-        /*if(user.getFeedList()!=null)
+        if(user.getFeedList()!=null)
         {
             jTextArea2Update();
-        }*/
+        }
         jScrollPane2.setViewportView(jTextArea2);
 
         jScrollPane3.setViewportView(jEditorPane1);
@@ -101,11 +99,15 @@ public class UserViewFrame extends javax.swing.JFrame {
         });
 
         jButton3.setText("Refresh");
-        /*jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = user.getFollowingArray();
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });*/
+        jButton3.addActionListener(new ActionListener(){
+        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jTextArea2Update();
+            }
+        });
+        
+        jList1.setModel(newListModel());
         jScrollPane4.setViewportView(jList1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -165,10 +167,21 @@ public class UserViewFrame extends javax.swing.JFrame {
     private void jTextArea2Update()
     {
         Twitt[] twitts=user.getFeedList();
+        jTextArea2.setText("");
         for(int i=0;i<twitts.length;i++)
         {
             jTextArea2.append(twitts[i].getID()+": "+twitts[i].getContent()+"\n");
         }
+    }
+
+    private DefaultListModel newListModel()
+    {
+        DefaultListModel result=new DefaultListModel();
+        for(int i=0;i<user.getFollowingArray().length;i++)
+        {
+            result.add(i,user.getFollowingArray()[i]);
+        }
+        return result;
     }
 
     // Variables declaration - do not modify                     

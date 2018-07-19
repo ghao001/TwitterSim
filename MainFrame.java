@@ -22,8 +22,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-        
-    }
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,7 +31,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
-    private void initComponents() {
+    private void initComponents(){
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
@@ -52,6 +51,11 @@ public class MainFrame extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(800, 500));
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Root");
+        try{
+            admin.addGroup("Root");
+        }
+        catch(IOException e)
+        {}
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane1.setViewportView(jTree1);
 
@@ -224,17 +228,18 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }else
         { 
-            try{    
-                DefaultMutableTreeNode selectedNode=(DefaultMutableTreeNode) jTree1.getSelectionPath().getLastPathComponent();
-                admin.addUser(newUserID);
-                DefaultMutableTreeNode newNode=new DefaultMutableTreeNode(newUserID);
-                newNode.setAllowsChildren(false);
-                selectedNode.add(newNode);
-            }
-            catch (IOException e)
-            {
-                jLabel1.setText("ID has been used.");
-            }
+            DefaultMutableTreeNode selectedNode=(DefaultMutableTreeNode) jTree1.getSelectionPath().getLastPathComponent();
+            if(selectedNode.getAllowsChildren()==true)
+                try{    
+                    admin.addUser(newUserID);
+                    DefaultMutableTreeNode newNode=new DefaultMutableTreeNode(newUserID);
+                    newNode.setAllowsChildren(false);
+                    selectedNode.add(newNode);
+                }
+                catch (IOException e)
+                {
+                    jLabel1.setText("ID has been used.");
+                }
         }
         DefaultTreeModel model=(DefaultTreeModel) jTree1.getModel();
         model.reload();
