@@ -10,11 +10,14 @@ public class AdminServer
     private int positiveNum;
     private Group root;
     private static final AdminServer instance=new AdminServer();
+    private List<String> inValids;
+    private String lastUser;
 
-    public AdminServer()
+    private AdminServer()
     {
         registedUsers=new HashMap<String,User>();
         groupSet=new HashMap<String,Group>();
+        inValids=new ArrayList<String>();
         twittNum=0;
         positiveNum=0;
         root=new Group("Root");
@@ -33,6 +36,10 @@ public class AdminServer
     {
         if(!isIDUsed(newID))
         {
+            if(newID.contains(" "))
+            {
+                inValids.add(newID);
+            }
             User newUser=new User(newID);
             registedUsers.put(newID,newUser);
             root.addMember(newUser);
@@ -46,6 +53,10 @@ public class AdminServer
         {
             if(groupSet.containsKey(groupID))
             {
+                if(newID.contains(" "))
+                {
+                    inValids.add(newID);
+                }
                 User newUser=new User(newID);
                 registedUsers.put(newID,newUser);
                 groupSet.get(groupID).addMember(newUser);
@@ -59,6 +70,10 @@ public class AdminServer
     {
         if(!groupSet.containsKey(newID))
         {
+            if(newID.contains(" "))
+            {
+                inValids.add(newID);
+            }
             Group newGroup=new Group(newID);
             groupSet.put(newID,newGroup);
             root.addMember(newGroup);
@@ -72,6 +87,10 @@ public class AdminServer
         {
             if(groupSet.containsKey(groupID))
             {
+                if(newID.contains(" "))
+                {
+                    inValids.add(newID);
+                }
                 Group newGroup=new Group(newID);
                 groupSet.put(newID,newGroup);
                 groupSet.get(groupID).addMember(newGroup);
@@ -121,5 +140,17 @@ public class AdminServer
     public int getPositive()
     {
         return positiveNum;
+    }
+    public List<String> getInvalids()
+    {
+        return inValids;
+    }
+    public void setLastUser(String lUser)
+    {
+        lastUser=lUser;
+    }
+    public String getLastUser()
+    {
+        return lastUser;
     }
 }

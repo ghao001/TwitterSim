@@ -11,13 +11,15 @@ public class User implements GroupInterface, FollowerInterface
     private List<Twitt> newsFeeds;
     private String groupID;
     private final int MAX_LENGTH=200;
-
+    private final long createTime; 
+    private long lastUpdate;
     public User(String in)
     {
         followers=new HashSet<User>();
         followings=new HashSet<User>();
         newsFeeds=new ArrayList<Twitt>();
         ID=in;
+        createTime=System.currentTimeMillis();
     }
 
     public void setID(String in)
@@ -93,6 +95,7 @@ public class User implements GroupInterface, FollowerInterface
     {
         //update newsfeed
         newsFeeds.add(newTwitt);
+        lastUpdate=System.currentTimeMillis();
     }
 
     public void twitt(String content) throws IOException
@@ -103,6 +106,7 @@ public class User implements GroupInterface, FollowerInterface
             Twitt newTwitt=new Twitt(ID);
             newTwitt.setContent(content);
             newsFeeds.add(newTwitt);
+            lastUpdate=System.currentTimeMillis();
             //update followers
             Iterator<User> iterator=followers.iterator();
             while(iterator.hasNext())
@@ -112,6 +116,7 @@ public class User implements GroupInterface, FollowerInterface
             }
             AdminServer admin=AdminServer.getInstance();
             admin.accTwittNum();
+            admin.setLastUser(ID);
             //positive twitt
             content+=" ";
             int f=0;
@@ -182,5 +187,13 @@ public class User implements GroupInterface, FollowerInterface
                 j++;
             }
         return result;
+    }
+    public long getCreateTime()
+    {
+        return createTime;
+    }
+    public long getLastUpdate()
+    {
+        return lastUpdate;
     }
 }
